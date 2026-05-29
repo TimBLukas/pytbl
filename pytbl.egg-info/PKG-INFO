@@ -1,0 +1,19 @@
+Metadata-Version: 2.4
+Name: pytbl
+Version: 0.0.1
+Summary: A personal library for stuff i got tired of doing again and again
+Author: TBL
+Author-email: tim.b.lukas@gmail.com
+License: MIT
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: pytest
+Dynamic: author
+Dynamic: author-email
+Dynamic: description-content-type
+Dynamic: license
+Dynamic: license-file
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
