@@ -209,7 +209,7 @@ def prime_factors(n: int) -> Dict[int, int]:
         {2: 2, 3: 1}
     """
     if n <= 0:
-        raises ValueError("Prime factorisation is defiiined only for positive Integers")
+        raise ValueError("Prime factorisation is defiiined only for positive Integers")
 
     factors = {}
 
@@ -353,9 +353,9 @@ def correlation(x, y):
     pass
 
 
-#
+# -------------------------------------------
 # Linea Algebra
-#
+# -------------------------------------------
 
 
 def dot_product(v1, v2):
@@ -403,9 +403,9 @@ def determinant_2x2(m):
     pass
 
 
-#
+# -------------------------------------------
 # Geometry
-#
+# -------------------------------------------
 
 
 def distance(p1, p2):

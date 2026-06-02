@@ -1,3 +1,4 @@
+# Requires requests library
 import requests
 from .exceptions import HTTPError
 
