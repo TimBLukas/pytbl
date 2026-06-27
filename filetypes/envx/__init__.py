@@ -1,63 +1,142 @@
 """
-High-level environment access package.
+envx
+~~~
 
-This package provides four layers:
-    1. ``core_access``: raw/get/set/require/cache primitives
-    2. ``typed_access``: typed parsing helpers (int/float/bool/list/json)
-    3. ``validation``: schema and utility-based validation
-    4. ``helpers``: operational helpers (redaction, snapshots, overrides)
+A lightweight environment variable library with .env support,
+typed accessors, validation, and safe redaction.
+
+Core Access
+-----------
+- :func:`get`             – read a variable, return a default if missing
+- :func:`require`         – read a required variable, raise if missing
+- :func:`require_one_of`  – require at least one from a list of candidates
+- :func:`exists`          – check whether a variable is present
+- :func:`get_prefix`      – return all variables matching a key prefix
+- :func:`as_dict`         – return all variables as a plain dict
+
+Typed Accessors
+---------------
+- :func:`get_int`         – parse value as ``int``
+- :func:`get_float`       – parse value as ``float``
+- :func:`get_bool`        – parse value as ``bool``
+- :func:`get_list`        – parse value as a delimited list
+- :func:`get_json`        – parse value as JSON
+
+Mutation
+--------
+- :func:`set`             – set a variable in the current process
+- :func:`unset`           – remove a variable from the current process
+
+Persistence
+-----------
+- :func:`save_env`        – write current environment to a .env file
+- :func:`reload_env`      – force re-read of the .env cache
+
+Merging & Snapshots
+-------------------
+- :func:`merge_sources`   – merge dotenv / env / secrets / cli with precedence
+- :func:`snapshot`        – capture a copy of the current process environment
+- :func:`restore`         – restore a previously captured snapshot
+- :func:`temporary`       – context manager for scoped environment overrides
+
+Validation
+----------
+- :func:`validate`        – validate variables against a declarative schema
+- :func:`is_valid_url`    – check whether a variable holds a valid absolute URL
+- :func:`is_valid_path`   – check whether a variable holds an existing path
+
+Redaction
+---------
+- :func:`mask`            – return a safe display value for a single variable
+- :func:`redacted_dict`   – return all variables with sensitive values masked
+- :func:`is_secret`       – heuristically detect sensitive keys
+
+Exceptions
+----------
+- :exc:`EnvNotFoundError`    – raised when a required variable is missing
+- :exc:`EnvValidationError`  – raised when schema validation fails
+
+Constants
+---------
+- :data:`DEFAULT_SECRET_KEYWORDS` – keywords used by :func:`is_secret`
 """
 
-from .core_access import (
-    EnvNotFoundError,
-    as_dict,
-    exists,
+from .envx_core_functions import (
+    # Core access
     get,
-    reload_env,
     require,
-    save_env,
+    require_one_of,
+    exists,
+    get_prefix,
+    as_dict,
+    # Typed accessors
+    get_int,
+    get_float,
+    get_bool,
+    get_list,
+    get_json,
+    # Mutation
     set,
     unset,
-)
-from .helpers import (
-    get_prefix,
-    is_secret,
-    mask,
+    # Persistence
+    save_env,
+    reload_env,
+    # Merging & snapshots
     merge_sources,
-    redacted_dict,
-    restore,
     snapshot,
+    restore,
     temporary,
+    # Validation
+    validate,
+    is_valid_url,
+    is_valid_path,
+    # Redaction
+    mask,
+    redacted_dict,
+    is_secret,
+    # Exceptions
+    EnvNotFoundError,
+    EnvValidationError,
+    # Constants
+    DEFAULT_SECRET_KEYWORDS,
 )
-from .typed_access import get_bool, get_float, get_int, get_json, get_list
-from .validation import EnvValidationError, is_valid_path, is_valid_url, require_one_of, validate
 
 __all__ = [
-    "EnvNotFoundError",
-    "EnvValidationError",
-    "as_dict",
-    "exists",
+    # Core access
     "get",
-    "get_bool",
-    "get_float",
-    "get_int",
-    "get_json",
-    "get_list",
-    "get_prefix",
-    "is_secret",
-    "is_valid_path",
-    "is_valid_url",
-    "mask",
-    "merge_sources",
-    "redacted_dict",
-    "reload_env",
     "require",
     "require_one_of",
-    "restore",
-    "save_env",
+    "exists",
+    "get_prefix",
+    "as_dict",
+    # Typed accessors
+    "get_int",
+    "get_float",
+    "get_bool",
+    "get_list",
+    "get_json",
+    # Mutation
     "set",
-    "snapshot",
-    "temporary",
     "unset",
+    # Persistence
+    "save_env",
+    "reload_env",
+    # Merging & snapshots
+    "merge_sources",
+    "snapshot",
+    "restore",
+    "temporary",
+    # Validation
     "validate",
+    "is_valid_url",
+    "is_valid_path",
+    # Redaction
+    "mask",
+    "redacted_dict",
+    "is_secret",
+    # Exceptions
+    "EnvNotFoundError",
+    "EnvValidationError",
+    # Constants
+    "DEFAULT_SECRET_KEYWORDS",
 ]
