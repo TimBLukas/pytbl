@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 """
 http – a full‑featured HTTP client module with retries, hooks, and models
 
@@ -37,3 +38,10 @@ __all__ = [
 
 __version__ = "0.0.1"
 __author__ = "TBL"
+=======
+from .client import HttpClient
+from .exceptions import HTTPError
+from .models import HttpResponse, RequestPayload, AuthToken
+
+__all__ = ["HttpClient", "HTTPError", "HttpResponse", "RequestPayload", "AuthToken"]
+>>>>>>> Stashed changes
