@@ -73,7 +73,7 @@ def _ensure_cache(path: PathLike, reload: bool = False) -> Any:
                 FileNotFoundError: If the file does not exist
                 json.JSONDecodeError: If the file is not valid JSON
         """
-        global _CACHE_DATA, _CACHE_DATA, _CACHE_MTIME
+        global _CACHE_PATH, _CACHE_DATA, _CACHE_MTIME
         target = _normalize_path(path).resolve()
         current_mtime = target.stat().st_mtime if target.exists() else 0
 
@@ -152,7 +152,7 @@ def _get_nested_value(data: Any, key_path: str) -> Any:
                 if isinstance(current, dict):
                         if part not in current:
                                 raise KeyError(f"Key '{part}' not found")
-                        curent = curent[part]
+                        current = current[part]
                 elif isinstance(current, list):
                         try:
                                 idx = int(part)
@@ -245,17 +245,18 @@ def _delete_nested_value(data: Any, key_path: str) -> None:
 
                 else:
                         raise TypeError(f"Cannot traverse into non-container: {type(current)}")
-                last = parts[-1]
-                if isinstance(current, dict):
-                        del current[last]
-                elif isinstance(current, list):
-                        try:
-                                idx = int(last)
-                        except ValueError:
-                                raise KeyError(f"Cannot use non-integer '{last}' on list")
-                        del current[idx]
-                else:
-                        raise TypeError(f"Cannot delete value on non-container: {type(current)}")
+
+        last = parts[-1]
+        if isinstance(current, dict):
+                del current[last]
+        elif isinstance(current, list):
+                try:
+                        idx = int(last)
+                except ValueError:
+                        raise KeyError(f"Cannot use non-integer '{last}' on list")
+                del current[idx]
+        else:
+                raise TypeError(f"Cannot delete value on non-container: {type(current)}")
 
 
 
@@ -311,7 +312,7 @@ def write_json(
         Example:
                 >>> write_json("output.json", {"name": "Alice", "age": 20})
         """
-        _write_json_data(data, path, indent=indent, atmoic=atomic)
+        _write_json_data(data, path, indent=indent, atomic=atomic)
 
 def append_json(
         path: PathLike,
@@ -456,7 +457,7 @@ def minify_json(
         else:
                 data = json.loads(source)
 
-        minified = json.dumps(data, seperators=(',', ':'))
+        minified = json.dumps(data, separators=(',', ':'))
 
         if output_path is not None:
                 _write_json_data(data, output_path, indent=None)
@@ -574,7 +575,7 @@ def json_to_csv(
                                         else:
                                                 if isinstance(v, (dict, list)):
                                                         v = json.dumps(v)
-                                        flat_row[full] = v
+                                                flat_row[full] = v
                         flatten_row(row)
                         writer.writerow(flat_row)
 

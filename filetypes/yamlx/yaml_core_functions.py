@@ -466,6 +466,9 @@ def from_json(json_path: PathLike, yaml_path: Optional[PathLike] = None, indent:
         Returns:
                 YAML string if yaml_path is None, otherwise None.
         """
+        if not YAML_AVAILABLE:
+                raise ImportError("PyYAML is required for from_json(). Install with: pip install pyyaml")
+
         with open(_normalize_path(json_path), 'r', encoding='utf-8') as f:
                 data = json.load(f)
         yaml_str = yaml.dump(data, indent=indent, allow_unicode=True, default_flow_style=False)
@@ -507,6 +510,9 @@ def from_xml(xml_path: PathLike, yaml_path: Optional[PathLike] = None, indent: i
         Returns:
                 YAML string if yaml_path is None, otherwise None.
         """
+        if not YAML_AVAILABLE:
+                raise ImportError("PyYAML is required for from_xml(). Install with: pip install pyyaml")
+
         tree = ET.parse(_normalize_path(xml_path))
         root = tree.getroot()
         data = {root.tag: _xml_to_dict(root)}

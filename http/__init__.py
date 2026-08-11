@@ -1,6 +1,5 @@
-<<<<<<< Updated upstream
 """
-http – a full‑featured HTTP client module with retries, hooks, and models
+http – a full-featured HTTP client module with retries, hooks, and models
 
 Public API:
     - HttpClient (main client)
@@ -11,7 +10,6 @@ Public API:
 
 from .client import HttpClient
 from .config import HttpClientConfig
-from .models import HttpRequest, HttpResponse
 from .exceptions import (
     HTTPError,
     ConnectionError,
@@ -21,6 +19,7 @@ from .exceptions import (
     HTTPStatusError,
     raise_for_status,
 )
+from .models import HttpRequest, HttpResponse
 
 __all__ = [
     "HttpClient",
@@ -38,10 +37,3 @@ __all__ = [
 
 __version__ = "0.0.1"
 __author__ = "TBL"
-=======
-from .client import HttpClient
-from .exceptions import HTTPError
-from .models import HttpResponse, RequestPayload, AuthToken
-
-__all__ = ["HttpClient", "HTTPError", "HttpResponse", "RequestPayload", "AuthToken"]
->>>>>>> Stashed changes

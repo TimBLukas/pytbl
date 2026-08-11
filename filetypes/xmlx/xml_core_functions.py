@@ -4,7 +4,7 @@
 import os
 import tempfile
 import xml.etree.ElementTree as ET
-from xml.dom.minidom import parseString as parse_xml_string
+from xml.dom.minidom import parseString as parse_minidom_string
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union, Iterator, Callable
 from collections import defaultdict
@@ -137,7 +137,7 @@ def _dict_to_element(tag: str, data: Any) -> ET.Element:
 
 def _pretty_xml(xml_str: str) -> str:
     """Pretty-print an XML string using minidom."""
-    dom = parse_xml_string(xml_str)
+    dom = parse_minidom_string(xml_str)
     return dom.toprettyxml(indent="  ")
 
 
@@ -257,7 +257,7 @@ def xpath_query(
 
     else:
         # ElementTree doesn't support namespaces well, ignore them
-        return _xpath_with_etree(tree, xpath_expr)
+        return xpath_with_etree(tree, xpath_expr)
 
 
 # ------------------------------------------

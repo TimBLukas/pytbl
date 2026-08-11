@@ -96,6 +96,8 @@ HTTP_RETURN_CODES = {
     561: "Unauthorized",
 }
 
+RETRYABLE_STATUS_CODES = [408, 429, 500, 502, 503, 504]
+
 
 @dataclass
 class HttpStatusCode:
@@ -111,4 +113,3 @@ class HttpStatusCode:
 
         else:
             raise ValueError(f"No Return Code found for code {code}")
-

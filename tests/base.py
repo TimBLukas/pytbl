@@ -32,7 +32,7 @@ from unittest.mock import patch, MagicMock
 # -----------------------------------------------------------
 # Library specific imports
 # -----------------------------------------------------------
-from ..datatypes import PathLike
+from datatypes import PathLike
 
 # -----------------------------------------------------------
 # Optional Imports (if available)

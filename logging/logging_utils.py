@@ -1,10 +1,10 @@
 # ------------------------------------------
 # Standard Library imports
 # ------------------------------------------
-import logging
+import importlib.util
 import os
 import sys
-from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
+import sysconfig
 from pathlib import Path
 from typing import Optional, Union, Dict, Any, Callable, Literal, overload
 from functools import wraps
@@ -12,7 +12,44 @@ from functools import wraps
 # ------------------------------------------
 # Library specific imports
 # ------------------------------------------
-from datatypes import PathLike
+PathLike = str | Path
+
+
+def _load_stdlib_logging():
+        stdlib_dir = Path(sysconfig.get_paths()["stdlib"]) / "logging"
+        original_logging = sys.modules.get("logging")
+
+        logging_spec = importlib.util.spec_from_file_location(
+                "_stdlib_logging",
+                stdlib_dir / "__init__.py",
+                submodule_search_locations=[str(stdlib_dir)],
+        )
+        assert logging_spec is not None and logging_spec.loader is not None
+        stdlib_logging = importlib.util.module_from_spec(logging_spec)
+
+        handlers_spec = importlib.util.spec_from_file_location(
+                "_stdlib_logging.handlers",
+                stdlib_dir / "handlers.py",
+        )
+        assert handlers_spec is not None and handlers_spec.loader is not None
+        stdlib_handlers = importlib.util.module_from_spec(handlers_spec)
+
+        try:
+                sys.modules["logging"] = stdlib_logging
+                logging_spec.loader.exec_module(stdlib_logging)
+                handlers_spec.loader.exec_module(stdlib_handlers)
+        finally:
+                if original_logging is not None:
+                        sys.modules["logging"] = original_logging
+                else:
+                        sys.modules.pop("logging", None)
+
+        return stdlib_logging, stdlib_handlers
+
+
+logging, _logging_handlers = _load_stdlib_logging()
+RotatingFileHandler = _logging_handlers.RotatingFileHandler
+TimedRotatingFileHandler = _logging_handlers.TimedRotatingFileHandler
 
 # ------------------------------------------
 # Type aliases
@@ -200,14 +237,14 @@ def _configure_logger_from_registry(name: str) -> logging.Logger:
 # ------------------------------------------
 def get_logger(
         name: str = 'pytbl',
-        level: Union[LogLevel, LogLevelInt] = _DEFAULT_LOG_LEVEL,
-        log_file: Optional[PathLike] = _DEFAULT_LOG_FILE,
-        console_output: bool = _DEFAULT_CONSOLE_OUTPUT,
-        log_format: str = _DEFAULT_LOG_FORMAT,
-        date_format: str = _DEFAULT_DATE_FORMAT,
-        max_bytes: int = _DEFAULT_MAX_BYTES,
-        backup_count: int = _DEFAULT_BACKUP_COUNT,
-        rotation: Literal['size', 'time'] = 'size'
+        level: Union[LogLevel, LogLevelInt, None] = None,
+        log_file: Optional[PathLike] = None,
+        console_output: Optional[bool] = None,
+        log_format: Optional[str] = None,
+        date_format: Optional[str] = None,
+        max_bytes: Optional[int] = None,
+        backup_count: Optional[int] = None,
+        rotation: Optional[Literal['size', 'time']] = None
 ) -> logging.Logger:
         """
         Configure and return a logger instance.
@@ -234,9 +271,15 @@ def get_logger(
                 >>> logger = get_logger('myapp', level='DEBUG', log_file='logs/app.log')
                 >>> logger.info('Application started')
         """
-        level_int = _validate_log_level(level)
+        level_int = _validate_log_level(_DEFAULT_LOG_LEVEL if level is None else level)
 
-        log_path = _normalize_path(log_file)
+        log_path = _normalize_path(_DEFAULT_LOG_FILE if log_file is None else log_file)
+        console_output = _DEFAULT_CONSOLE_OUTPUT if console_output is None else console_output
+        log_format = _DEFAULT_LOG_FORMAT if log_format is None else log_format
+        date_format = _DEFAULT_DATE_FORMAT if date_format is None else date_format
+        max_bytes = _DEFAULT_MAX_BYTES if max_bytes is None else max_bytes
+        backup_count = _DEFAULT_BACKUP_COUNT if backup_count is None else backup_count
+        rotation = _DEFAULT_ROTATION if rotation is None else rotation
 
         _logger_configs[name] = {
                 'level': level_int,
@@ -275,11 +318,18 @@ def reconfigure_logger(
                 >>> logger = reconfigure_logger('myapp', level='ERROR', console_output=False)
         """
         current = _logger_configs.get(name, {})
+        new_config = {
+                'level': current.get('level', _DEFAULT_LOG_LEVEL),
+                'log_file': current.get('log_file', _DEFAULT_LOG_FILE),
+                'console_output': current.get('console_output', _DEFAULT_CONSOLE_OUTPUT),
+                'log_format': current.get('log_format', _DEFAULT_LOG_FORMAT),
+                'date_format': current.get('date_format', _DEFAULT_DATE_FORMAT),
+                'max_bytes': current.get('max_bytes', _DEFAULT_MAX_BYTES),
+                'backup_count': current.get('backup_count', _DEFAULT_BACKUP_COUNT),
+                'rotation': current.get('rotation', _DEFAULT_ROTATION),
+        }
 
-        # Merge with kwargs (kwargs override)
-        new_config = {**_DEFAULT_CONFIG, **current, **kwargs}
-
-        # apply new config
+        new_config.update(kwargs)
         return get_logger(name, **new_config)
 
 
