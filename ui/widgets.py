@@ -1,4 +1,30 @@
-"""General purpose UI widgets for quick application assembly."""
+"""UI widgets for application assembly
+
+provides factory functions and high-level components that wrap :mod:`tkinter`
+and :mod:`tkinter.ttk`.
+This module allows interfaces to be constructed with minimal boilerplate by
+providing defaults for typography, inputs, and feedback elements.
+
+Every factory and component:
+
+* returns the created widget instead of packing/gridding it itself, so
+  the caller stays in control of layout;
+* leverages a centralized design system in :mod:`style` while allowing
+  explicit ``style`` overrides;
+* simplifies state management (e.g., bundling variables with checkboxes
+  or managing internal switch logic);
+* is annotated and documented following standard library conventions.
+
+Example:
+    >>> root = tk.Tk()
+    >>> # Assemble a quick login card
+    >>> card = create_card(root)
+    >>> card.pack(padx=20, pady=20)
+    >>> create_header(card, "Login", level=2).pack(pady=5)
+    >>> user = create_input_field(card, placeholder="Username")
+    >>> user.pack(fill="x", pady=5)
+    >>> Switch(card, command=on_toggle).pack(pady=10)
+"""
 
 from __future__ import annotations
 import tkinter as tk
@@ -123,9 +149,6 @@ def create_status_bar(parent: tk.Misc, initial_text: str = "Ready") -> ttk.Label
     return lbl
 
 
-# --- Layout Containers ---
-
-
 def create_card(parent: tk.Misc, padding: int = 15) -> ttk.Frame:
     """Create a white background frame with a border for grouping content."""
     style = get_card_style(parent)
@@ -150,7 +173,7 @@ def create_scrollable_text(
 
     txt.pack(side="left", fill="both", expand=True)
     scrolly.pack(side="right", fill="y")
-    # We return the frame so the user can pack the whole unit
+
     return frame, txt  # type: ignore
 
 
@@ -170,7 +193,6 @@ def create_stat_card(
     return card
 
 
-# --- 2. Avatar ---
 def create_avatar(parent: tk.Misc, initials: str, size: int = 40) -> tk.Canvas:
     canvas = tk.Canvas(
         parent,
@@ -190,7 +212,6 @@ def create_avatar(parent: tk.Misc, initials: str, size: int = 40) -> tk.Canvas:
     return canvas
 
 
-# --- 3. Alert / Banner ---
 def create_alert(parent: tk.Misc, text: str, variant: str = "info") -> ttk.Frame:
     alert_style = get_alert_style(parent, variant)
     frame = ttk.Frame(parent, style=alert_style, padding=10)
@@ -202,7 +223,6 @@ def create_alert(parent: tk.Misc, text: str, variant: str = "info") -> ttk.Frame
     return frame
 
 
-# --- 4. iOS Switch (Canvas-based) ---
 class Switch(tk.Canvas):
     def __init__(self, parent, command: Callable[[bool], None] = None):
         super().__init__(
@@ -272,7 +292,6 @@ class Switch(tk.Canvas):
             self.command(self.state)
 
 
-# --- 5. Data Row ---
 def create_data_row(
     parent: tk.Misc, title: str, subtitle: str, icon: str = "📄"
 ) -> ttk.Frame:
@@ -290,7 +309,6 @@ def create_data_row(
     return frame
 
 
-# --- 6. Metric Ring (Gauge) ---
 def create_metric_ring(parent: tk.Misc, percent: int, size: int = 60) -> tk.Canvas:
     canvas = tk.Canvas(parent, width=size, height=size, highlightthickness=0)
     extent = (percent / 100) * 359
@@ -322,7 +340,6 @@ def create_metric_ring(parent: tk.Misc, percent: int, size: int = 60) -> tk.Canv
     return canvas
 
 
-# --- 7. Sidebar Link ---
 def create_sidebar_link(
     parent: tk.Misc, text: str, active: bool = False, command=None
 ) -> ttk.Button:
@@ -330,7 +347,6 @@ def create_sidebar_link(
     return ttk.Button(parent, text=text, style=s, command=command)
 
 
-# --- 8. Step Indicator ---
 def create_step_indicator(parent: tk.Misc, steps: List[str], current: int) -> ttk.Frame:
     frame = ttk.Frame(parent)
     for i, step in enumerate(steps):
@@ -351,7 +367,6 @@ def create_step_indicator(parent: tk.Misc, steps: List[str], current: int) -> tt
     return frame
 
 
-# --- 9. Tag Entry ---
 class TagEntry(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -494,11 +509,9 @@ def _demo():
     root.geometry("500x800")
     root.configure(bg=_COLORS["bg_gray_1"])
 
-    # Global Style Setup
     s = ttk.Style()
     s.theme_use("clam")
 
-    # --- Header ---
     header_frame = ttk.Frame(root, padding=(20, 20, 20, 10))
     header_frame.pack(fill="x")
     create_header(header_frame, "Component Library", level=1).pack(side="left")
@@ -508,7 +521,6 @@ def _demo():
     tabs = create_tab_container(root)
     tabs.pack(fill="both", expand=True, padx=10, pady=10)
 
-    # Helper to create a scrollable tab
     def create_tab(name):
         frame = ttk.Frame(tabs, padding=15)
         tabs.add(frame, text=name)

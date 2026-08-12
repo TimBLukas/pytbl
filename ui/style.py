@@ -37,7 +37,10 @@ __all__ = [
     "get_sidebar_style",
     "get_alert_style",
     "get_tag_style",
+    # container styles
+    "get_container_styles",
 ]
+
 
 _DEFAULT_FONT: Tuple[str, int] = ("Segoe UI", 10)
 _DEFAULT_PADDING: Tuple[int, int] = (16, 9)
@@ -367,3 +370,27 @@ def get_tag_style(root: tk.Misc, variant: str = "primary") -> str:
     )
 
     return name
+
+
+def get_container_styles(root: tk.Misc):
+    """Initialize structural styles for containers"""
+    style = ttk.Style(root)
+
+    # Card: background and border
+    style.configure(
+        "Card.TFrame",
+        background=_COLORS["bg_white"],
+        relief="solid",
+        borderwidth=1,
+    )
+
+    # surface
+    style.configure("Surface.TFrame", background=_COLORS["bg_gray_1"], relief="flat")
+
+    # sidebar
+    style.configure("Sidbar.TFrame", background=_COLORS["bg_gray_2"], relief="flat")
+
+    # modal overlay
+    style.configure("Modal.TFrame", background="#000000")
+
+    return style
