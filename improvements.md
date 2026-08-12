@@ -6,12 +6,6 @@
 
 - Make package metadata consistent across `setup.py`, `pyproject.toml`, and `LICENSE`.
 
-### Important
-
-- Add module-level docstrings and short examples for public APIs.
-- Normalize naming (`read_*`, `write_*`, `to_*`, `from_*`) across modules.
-- Reduce optional dependency confusion by documenting extras.
-
 ### Nice to have
 
 - Add richer type hints throughout the codebase.
