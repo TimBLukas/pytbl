@@ -8,8 +8,7 @@
 import time
 import functools
 import os
-import sys
-from typing import Any, Callable, Optional, Tuple, Type, Union, List
+from typing import Any, Callable, Optional, Tuple, Type
 from unittest import SkipTest
 
 
@@ -375,7 +374,6 @@ def timeout(seconds: float) -> Callable:
         ... # raisaes AssertionError: Timeout after 2s
     """
     import multiprocessing as mp
-    import queue
 
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)

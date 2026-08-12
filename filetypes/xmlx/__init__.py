@@ -4,7 +4,7 @@ xml_utils
 
 Utilities for reading, writing, querying, modifying, and validating XML files.
 
-This package provides a high-level interface for working with XML files,
+package provides a interface for working with XML files,
 including caching, atomic writes, dictionary conversion, XPath queries,
 element manipulation, and XSD schema validation.
 

@@ -1,5 +1,5 @@
 """
-http – a full-featured HTTP client module with retries, hooks, and models
+http – a HTTP client module with retries, hooks, and models
 
 Public API:
     - HttpClient (main client)

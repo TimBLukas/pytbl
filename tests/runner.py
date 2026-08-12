@@ -9,7 +9,7 @@ import sys
 import unittest
 import os
 from pathlib import Path
-from typing import List, Optional, Tuple, Union, Any
+from typing import Union, Any
 
 # -------------------------------------------
 # Type aliases

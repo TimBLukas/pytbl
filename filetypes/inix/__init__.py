@@ -4,9 +4,8 @@ ini_utils
 
 Utilities for reading, writing, and converting INI configuration files.
 
-This package provides a high-level interface for working with INI files,
-including caching, atomic writes, dictionary conversion, flattening,
-and export to JSON/YAML.
+package provides a high-level interface for interacting with INI files:
+- caching, atomic writes, dictionary conversion, flattening, and export to JSON/YAML.
 
 Reading
 -------

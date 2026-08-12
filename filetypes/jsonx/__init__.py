@@ -4,7 +4,7 @@ json_utils
 
 Utilities for reading, writing, transforming, and converting JSON files.
 
-This package provides a high-level interface for working with JSON files,
+package provides a interface for working with JSON files,
 including caching, atomic writes, nested key access, minification,
 prettification, and conversion to/from CSV, XML, and YAML.
 

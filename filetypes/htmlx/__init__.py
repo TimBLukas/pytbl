@@ -2,7 +2,7 @@
 html_utils
 ~~~~~~~~~~
 
-A lightweight HTML reading, generation, and manipulation library.
+A HTML reading, generation, and manipulation library module.
 
 Reading & Parsing
 -----------------

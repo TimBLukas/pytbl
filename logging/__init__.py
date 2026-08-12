@@ -1,7 +1,7 @@
 """
 logging_utils – flexible logging configuration and function call tracing.
 
-This module provides:
+module provides:
         - A `get_logger` function with caching, file rotation, and console output.
         - `log_function_call` decorator for automatic entry/exit/exception logging.
         - Global default configuration management.
@@ -17,13 +17,13 @@ Public API:
 """
 
 from .logging_utils import (
-        logging as _stdlib_logging,
-        get_logger,
-        reconfigure_logger,
-        log_function_call,
-        set_default_logging_config,
-        get_logger_registry,
-        clear_logger_registry,
+    logging as _stdlib_logging,
+    get_logger,
+    reconfigure_logger,
+    log_function_call,
+    set_default_logging_config,
+    get_logger_registry,
+    clear_logger_registry,
 )
 
 getLogger = get_logger
@@ -42,27 +42,28 @@ FileHandler = _stdlib_logging.FileHandler
 NullHandler = _stdlib_logging.NullHandler
 
 __all__ = [
-        "get_logger",
-        "reconfigure_logger",
-        "log_function_call",
-        "set_default_logging_config",
-        "get_logger_registry",
-        "clear_logger_registry",
-        "getLogger",
-        "basicConfig",
-        "DEBUG",
-        "INFO",
-        "WARNING",
-        "ERROR",
-        "CRITICAL",
-        "NOTSET",
-        "Logger",
-        "Handler",
-        "Formatter",
-        "StreamHandler",
-        "FileHandler",
-        "NullHandler",
+    "get_logger",
+    "reconfigure_logger",
+    "log_function_call",
+    "set_default_logging_config",
+    "get_logger_registry",
+    "clear_logger_registry",
+    "getLogger",
+    "basicConfig",
+    "DEBUG",
+    "INFO",
+    "WARNING",
+    "ERROR",
+    "CRITICAL",
+    "NOTSET",
+    "Logger",
+    "Handler",
+    "Formatter",
+    "StreamHandler",
+    "FileHandler",
+    "NullHandler",
 ]
 
 __version__ = "0.0.1"
 __author__ = "TBL"
+

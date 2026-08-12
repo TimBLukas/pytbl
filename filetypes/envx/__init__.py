@@ -2,8 +2,8 @@
 envx
 ~~~
 
-A lightweight environment variable library with .env support,
-typed accessors, validation, and safe redaction.
+A environment variable module with .env support,
+typed accessors, validation, and redaction.
 
 Core Access
 -----------

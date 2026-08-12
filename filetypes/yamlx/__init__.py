@@ -4,7 +4,7 @@ yaml_utils
 
 Utilities for reading, writing, merging, templating, and converting YAML files.
 
-This package provides a high-level interface for working with YAML files,
+package provides a high-level interface for working with YAML files,
 including caching, atomic writes, deep merging, Jinja2 templating,
 and conversion to/from JSON and XML.
 

@@ -14,6 +14,6 @@ setup(
     author_email="tim.b.lukas@gmail.com",
     packages=find_packages(),
     install_requires=["pytest"],
-    license="MIT",
+    license="GPL-3.0-or-later",
     python_requires=">=3.7",
 )
