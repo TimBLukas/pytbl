@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import tkinter as tk
 from tkinter import ttk
-from typing import Tuple, Dict, Any
+from typing import Any, Dict, Set, Tuple
 
 __all__ = [
     # btn styles
@@ -65,6 +65,15 @@ _COLORS = {
     "text_main": "#212529",
     "text_muted": "#868e96",
 }
+
+_LABEL_VARIANTS = {"h1", "h2", "body", "muted", "badge"}
+_PROGRESS_VARIANTS = {"primary", "success", "danger"}
+_FEEDBACK_VARIANTS = {"primary", "success", "danger", "info", "warning"}
+
+
+def _validate_variant(variant: str, allowed: Set[str], kind: str) -> None:
+    if variant not in allowed:
+        raise ValueError(f"Unknown {kind} variant: {variant!r}")
 
 
 def _configure_solid_style(
@@ -242,6 +251,7 @@ def get_circle_btn_style(root: tk.Misc) -> str:
 
 def get_label_style(root: tk.Misc, variant: str = "body") -> str:
     """Typography styles: h1, h2, body, muted or badge"""
+    _validate_variant(variant, _LABEL_VARIANTS, "label")
     style = ttk.Style(root)
     name = f"{variant.capitalize()}.TLabel"
 
@@ -264,7 +274,7 @@ def get_label_style(root: tk.Misc, variant: str = "body") -> str:
 
 
 def get_entry_style(root: tk.Misc, error: bool = False) -> str:
-    """input field styles, Handles focus and error state"""
+    """Input field style with optional error highlighting."""
     style = ttk.Style(root)
     name = "Error.TEntry" if error else "TEntry"
 
@@ -272,9 +282,9 @@ def get_entry_style(root: tk.Misc, error: bool = False) -> str:
 
     style.configure(
         name,
-        fieldbackgrounds=_COLORS["bg_white"],
+        fieldbackground=_COLORS["bg_white"],
         bordercolor=border_color,
-        light_color=border_color,
+        lightcolor=border_color,
         darkcolor=border_color,
         padding=8,
     )
@@ -283,7 +293,7 @@ def get_entry_style(root: tk.Misc, error: bool = False) -> str:
 
 
 def get_card_style(root: tk.Misc) -> str:
-    """Frame style that looks like a contained card"""
+    """Frame style that looks like a contained card."""
     style = ttk.Style(root)
     style.configure(
         "Card.TFrame",
@@ -295,7 +305,8 @@ def get_card_style(root: tk.Misc) -> str:
 
 
 def get_progress_style(root: tk.Misc, variant: str = "primary") -> str:
-    """ProgressBar styles: primary, success, or danger"""
+    """Progressbar style for a limited semantic color palette."""
+    _validate_variant(variant, _PROGRESS_VARIANTS, "progress")
     style = ttk.Style(root)
     name = f"{variant.capitalize()}.Horizontal.TProgressbar"
 
@@ -311,7 +322,7 @@ def get_progress_style(root: tk.Misc, variant: str = "primary") -> str:
 
 
 def get_tab_style(root: tk.Misc) -> str:
-    """Notebook (Tab) styling"""
+    """Notebook tab styling."""
     style = ttk.Style(root)
     style.configure("TNotebook", background=_COLORS["bg_gray_1"], borderwidth=0)
     style.configure("TNotebook.Tab", padding=(12, 4), font=_BODY_FONT)
@@ -327,8 +338,9 @@ def get_tab_style(root: tk.Misc) -> str:
 
 
 def get_alert_style(root: tk.Misc, variant: str) -> str:
-    """Style for Alert / Banner components"""
-    style = ttk.Style()
+    """Style for alert and banner components."""
+    _validate_variant(variant, _FEEDBACK_VARIANTS, "alert")
+    style = ttk.Style(root)
     name = f"{variant.capitalize()}.Alert.TFrame"
     color = _COLORS.get(variant, _COLORS["info"])
     style.configure(name, background=color, relief="flat")
@@ -336,7 +348,7 @@ def get_alert_style(root: tk.Misc, variant: str) -> str:
 
 
 def get_sidebar_style(root: tk.Misc, active: bool = False) -> str:
-    """style for sidebar navigation links"""
+    """Style for sidebar navigation links."""
     style = ttk.Style(root)
     name = "Active.Sidebar.TButton" if active else "Sidebar.TButton"
     bg = _COLORS["bg_gray_2"] if active else _COLORS["bg_white"]
@@ -356,7 +368,8 @@ def get_sidebar_style(root: tk.Misc, active: bool = False) -> str:
 
 
 def get_tag_style(root: tk.Misc, variant: str = "primary") -> str:
-    """Style for Tags/Badges"""
+    """Style for tags and badges."""
+    _validate_variant(variant, _FEEDBACK_VARIANTS, "tag")
     style = ttk.Style(root)
     name = f"{variant.capitalize()}.Tag.TLabel"
     color = _COLORS.get(variant, _COLORS["primary"])
@@ -373,7 +386,7 @@ def get_tag_style(root: tk.Misc, variant: str = "primary") -> str:
 
 
 def get_container_styles(root: tk.Misc):
-    """Initialize structural styles for containers"""
+    """Initialize structural styles for containers."""
     style = ttk.Style(root)
 
     # Card: background and border
@@ -388,7 +401,7 @@ def get_container_styles(root: tk.Misc):
     style.configure("Surface.TFrame", background=_COLORS["bg_gray_1"], relief="flat")
 
     # sidebar
-    style.configure("Sidbar.TFrame", background=_COLORS["bg_gray_2"], relief="flat")
+    style.configure("Sidebar.TFrame", background=_COLORS["bg_gray_2"], relief="flat")
 
     # modal overlay
     style.configure("Modal.TFrame", background="#000000")

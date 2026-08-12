@@ -31,7 +31,7 @@ import tkinter as tk
 from tkinter import ttk
 from typing import Callable, Optional, List, Any, Tuple, NamedTuple, Dict
 
-from style import (
+from .style import (
     get_label_style,
     get_entry_style,
     get_card_style,
@@ -46,7 +46,9 @@ from style import (
 
 
 def create_header(parent: tk.Misc, text: str, level: int = 1) -> ttk.Label:
-    """Create a H1 or H2 header label."""
+    """Create a heading label."""
+    if level not in (1, 2):
+        raise ValueError("level must be 1 or 2")
     variant = "h1" if level == 1 else "h2"
     style = get_label_style(parent, variant)
     return ttk.Label(parent, text=text, style=style)
@@ -70,10 +72,26 @@ def create_input_field(
     entry = ttk.Entry(parent, style=style, show="*" if password else "")
     if placeholder:
         entry.insert(0, placeholder)
-        entry.bind(
-            "<FocusIn>",
-            lambda e: entry.delete(0, tk.END) if entry.get() == placeholder else None,
-        )
+        placeholder_state = {"visible": True}
+
+        def _clear_placeholder(_: tk.Event) -> None:
+            if placeholder_state["visible"] and entry.get() == placeholder:
+                entry.delete(0, tk.END)
+                if password:
+                    entry.configure(show="*")
+                placeholder_state["visible"] = False
+
+        def _restore_placeholder(_: tk.Event) -> None:
+            if not entry.get():
+                entry.insert(0, placeholder)
+                if password:
+                    entry.configure(show="")
+                placeholder_state["visible"] = True
+
+        if password:
+            entry.configure(show="")
+        entry.bind("<FocusIn>", _clear_placeholder)
+        entry.bind("<FocusOut>", _restore_placeholder)
     return entry
 
 
@@ -81,6 +99,8 @@ def create_number_spinner(
     parent: tk.Misc, from_: int, to: int, initial: int = 0
 ) -> ttk.Spinbox:
     """Create a numeric input with up/down arrows."""
+    if from_ > to:
+        raise ValueError("from_ must be less than or equal to to")
     sb = ttk.Spinbox(parent, from_=from_, to=to)
     sb.set(initial)
     return sb
@@ -90,8 +110,10 @@ def create_dropdown(
     parent: tk.Misc, options: List[str], default: Optional[str] = None
 ) -> ttk.Combobox:
     """Create a read-only selection dropdown."""
+    if default is not None and default not in options:
+        raise ValueError("default must be one of the provided options")
     cb = ttk.Combobox(parent, values=options, state="readonly")
-    if default:
+    if default is not None:
         cb.set(default)
     elif options:
         cb.current(0)
@@ -128,12 +150,11 @@ def create_progress_bar(
     Raises.
         ValueError: if mode not in Literal['determinate', 'indeterminate']
     """
-    style = get_progress_style(parent, variant)
-
     if mode not in ["determinate", "indeterminate"]:
         raise ValueError(
             "Invalid mode provided, mode needs to be Literal['determinate', 'indeterminate']"
         )
+    style = get_progress_style(parent, variant)
     return ttk.Progressbar(parent, mode=mode, style=style)
 
 
@@ -164,7 +185,7 @@ def create_tab_container(parent: tk.Misc) -> ttk.Notebook:
 
 def create_scrollable_text(
     parent: tk.Misc, height: int = 5
-) -> Tuple[tk.Text, ttk.Scrollbar]:
+) -> Tuple[ttk.Frame, tk.Text]:
     """Create a multi-line text area with a scrollbar."""
     frame = ttk.Frame(parent)
     txt = tk.Text(frame, height=height, font=_BODY_FONT, relief="flat", padx=5, pady=5)
@@ -174,7 +195,9 @@ def create_scrollable_text(
     txt.pack(side="left", fill="both", expand=True)
     scrolly.pack(side="right", fill="y")
 
-    return frame, txt  # type: ignore
+    frame.text = txt  # type: ignore[attr-defined]
+    frame.scrollbar = scrolly  # type: ignore[attr-defined]
+    return frame, txt
 
 
 def create_stat_card(
@@ -216,7 +239,10 @@ def create_alert(parent: tk.Misc, text: str, variant: str = "info") -> ttk.Frame
     alert_style = get_alert_style(parent, variant)
     frame = ttk.Frame(parent, style=alert_style, padding=10)
     lbl = ttk.Label(
-        frame, text=text, background=_COLORS.get(variant), foreground="white"
+        frame,
+        text=text,
+        background=_COLORS.get(variant, _COLORS["info"]),
+        foreground="white",
     )
     lbl.pack(side="left", padx=10)
     ttk.Button(frame, text="✕", width=2, command=frame.destroy).pack(side="right")
@@ -224,7 +250,7 @@ def create_alert(parent: tk.Misc, text: str, variant: str = "info") -> ttk.Frame
 
 
 class Switch(tk.Canvas):
-    def __init__(self, parent, command: Callable[[bool], None] = None):
+    def __init__(self, parent: tk.Misc, command: Optional[Callable[[bool], None]] = None):
         super().__init__(
             parent, width=40, height=20, highlightthickness=0, cursor="hand2"
         )
@@ -310,6 +336,8 @@ def create_data_row(
 
 
 def create_metric_ring(parent: tk.Misc, percent: int, size: int = 60) -> tk.Canvas:
+    if not 0 <= percent <= 100:
+        raise ValueError("percent must be between 0 and 100")
     canvas = tk.Canvas(parent, width=size, height=size, highlightthickness=0)
     extent = (percent / 100) * 359
     canvas.create_arc(
@@ -341,13 +369,17 @@ def create_metric_ring(parent: tk.Misc, percent: int, size: int = 60) -> tk.Canv
 
 
 def create_sidebar_link(
-    parent: tk.Misc, text: str, active: bool = False, command=None
+    parent: tk.Misc, text: str, active: bool = False, command: Optional[Callable[[], None]] = None
 ) -> ttk.Button:
     s = get_sidebar_style(parent, active)
     return ttk.Button(parent, text=text, style=s, command=command)
 
 
 def create_step_indicator(parent: tk.Misc, steps: List[str], current: int) -> ttk.Frame:
+    if not steps:
+        raise ValueError("steps must not be empty")
+    if not 0 <= current < len(steps):
+        raise ValueError("current must point to an existing step")
     frame = ttk.Frame(parent)
     for i, step in enumerate(steps):
         color = _COLORS["primary"] if i <= current else _COLORS["border"]
@@ -368,7 +400,7 @@ def create_step_indicator(parent: tk.Misc, steps: List[str], current: int) -> tt
 
 
 class TagEntry(ttk.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent: tk.Misc):
         super().__init__(parent)
         self.tags: List[str] = []
         self.entry = ttk.Entry(self)
@@ -377,7 +409,7 @@ class TagEntry(ttk.Frame):
         self.container = ttk.Frame(self)
         self.container.pack(side="left")
 
-    def _add_tag(self, event):
+    def _add_tag(self, event: tk.Event) -> None:
         val = self.entry.get().strip()
         if val and val not in self.tags:
             self.tags.append(val)
@@ -392,7 +424,7 @@ class TagEntry(ttk.Frame):
 
 
 class Accordion(ttk.Frame):
-    def __init__(self, parent, title: str, content_func: Callable[[ttk.Frame], None]):
+    def __init__(self, parent: tk.Misc, title: str, content_func: Callable[[ttk.Frame], None]):
         super().__init__(parent)
         self.header = ttk.Button(self, text=f"▶ {title}", command=self._toggle)
         self.header.pack(fill="x")
@@ -400,7 +432,7 @@ class Accordion(ttk.Frame):
         content_func(self.content_frame)
         self.is_open = False
 
-    def _toggle(self):
+    def _toggle(self) -> None:
         if self.is_open:
             self.content_frame.pack_forget()
             self.header.configure(text=self.header.cget("text").replace("▼", "▶"))
@@ -420,15 +452,17 @@ def create_empty_state(parent: tk.Misc, message: str) -> ttk.Frame:
 
 
 def create_segmented_control(
-    parent: tk.Misc, options: List[str], callback
+    parent: tk.Misc, options: List[str], callback: Callable[[str], None]
 ) -> ttk.Frame:
+    if not options:
+        raise ValueError("options must not be empty")
     f = ttk.Frame(parent)
     for opt in options:
         ttk.Button(f, text=opt, command=lambda o=opt: callback(o)).pack(side="left")
     return f
 
 
-def show_toast(root: tk.Tk, message: str):
+def show_toast(root: tk.Tk, message: str) -> tk.Toplevel:
     toast = tk.Toplevel(root)
     toast.overrideredirect(True)
     toast.geometry(f"+{root.winfo_x() + 20}+{root.winfo_y() + 20}")
@@ -436,9 +470,12 @@ def show_toast(root: tk.Tk, message: str):
         toast, text=message, background="#333", foreground="white", padding=10
     ).pack()
     root.after(3000, toast.destroy)
+    return toast
 
 
 def create_breadcrumbs(parent: tk.Misc, paths: List[str]) -> ttk.Frame:
+    if not paths:
+        raise ValueError("paths must not be empty")
     f = ttk.Frame(parent)
     for i, p in enumerate(paths):
         ttk.Label(f, text=p, foreground=_COLORS["primary"], cursor="hand2").pack(
@@ -461,6 +498,7 @@ def create_password_meter(parent: tk.Misc, entry: ttk.Entry) -> ttk.Progressbar:
 
 
 def create_loading_overlay(parent: tk.Frame) -> ttk.Frame:
+    """Create a minimal loading overlay."""
     overlay = ttk.Frame(parent)
     ttk.Label(overlay, text="⌛ Loading...", font=("Segoe UI", 12, "bold")).place(
         relx=0.5, rely=0.5, anchor="center"
@@ -502,7 +540,7 @@ class SearchHistory(ttk.Frame):
 
 
 def _demo():
-    import buttons
+    from . import buttons
 
     root = tk.Tk()
     root.title("UI Library Component Gallery")
@@ -584,7 +622,9 @@ def _demo():
 
     # Password with Meter
     ttk.Label(tab_inputs, text="New Password").pack(anchor="w", pady=(15, 5))
-    pw_input = create_input_field(tab_inputs, password=True)
+    pw_input = create_input_field(
+        tab_inputs, placeholder="Enter password", password=True
+    )
     pw_input.pack(fill="x")
     create_password_meter(tab_inputs, pw_input).pack(fill="x", pady=5)
 

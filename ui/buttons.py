@@ -23,15 +23,15 @@ import tkinter.ttk as ttk
 from enum import Enum
 from typing import Callable, Dict, NamedTuple, Optional
 
-from style import (
+from .style import (
+    get_circle_btn_style,
     get_danger_btn_style,
     get_default_btn_style,
     get_icon_btn_style,
     get_link_btn_style,
     get_outline_btn_style,
-    get_success_btn_style,
     get_rounded_btn_style,
-    get_circle_btn_style,
+    get_success_btn_style,
 )
 
 __all__ = [
@@ -39,6 +39,7 @@ __all__ = [
     "create_button",
     "create_link_button",
     "create_icon_button",
+    "create_circle_button",
     "ToggleButton",
     "create_toggle_button",
 ]
@@ -127,7 +128,10 @@ def create_button(
         The created, unpacked :class:`ttk.Button`. Call ``.pack()``,
         ``.grid()`` or ``.place()`` on it to add it to the layout.
     """
-    resolved_style = style or _VARIANT_STYLE_GETTERS[variant](parent)
+    try:
+        resolved_style = style or _VARIANT_STYLE_GETTERS[variant](parent)
+    except KeyError as exc:
+        raise ValueError(f"Unknown button variant: {variant!r}") from exc
     btn = ttk.Button(parent, text=text, style=resolved_style, command=command)
     _apply_dimensions(btn, width, height)
     if disabled:
@@ -276,11 +280,18 @@ def create_circle_button(
     radius: int = 40,
     style: Optional[str] = None,
 ) -> ttk.Button:
-    """Create a circular button, e.g. for icons
+    """Create a circular button, e.g. for avatar or icon actions.
 
     Args:
-    radius: The diameter/size of the button in pixels,
+        parent: The parent widget the button will belong to.
+        text: Optional label for the button.
+        image: Optional icon image.
+        command: Callback invoked with no arguments when clicked.
+        radius: Approximate diameter of the button in pixels.
+        style: Explicit ttk style name, overriding the library default.
     """
+    if text is None and image is None:
+        raise ValueError("create_circle_button requires text or image")
     resolved_style = style or get_circle_btn_style(parent)
     btn = ttk.Button(parent, image=image, command=command, style=resolved_style)
     if image:
@@ -292,6 +303,8 @@ def create_circle_button(
     # To keep it circular, enforce height and width to be equal
     btn.configure(width=1)
     btn.configure(padding=radius // 4)
+    if image is not None:
+        btn.image = image  # type: ignore[attr-defined]
     return btn
 
 
