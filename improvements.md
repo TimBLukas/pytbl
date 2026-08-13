@@ -2,8 +2,6 @@
 
 ## UI module rating
 
-**Rating: 5.5/10**
-
 The module is ambitious and feature-rich, but it is held back by inconsistent APIs, duplicated style logic, import/layout issues, and several correctness bugs. It has a useful component library shape, but it needs cleanup before it feels dependable or easy to extend.
 
 ## Improvements to make

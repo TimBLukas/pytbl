@@ -250,7 +250,9 @@ def create_alert(parent: tk.Misc, text: str, variant: str = "info") -> ttk.Frame
 
 
 class Switch(tk.Canvas):
-    def __init__(self, parent: tk.Misc, command: Optional[Callable[[bool], None]] = None):
+    def __init__(
+        self, parent: tk.Misc, command: Optional[Callable[[bool], None]] = None
+    ):
         super().__init__(
             parent, width=40, height=20, highlightthickness=0, cursor="hand2"
         )
@@ -369,7 +371,10 @@ def create_metric_ring(parent: tk.Misc, percent: int, size: int = 60) -> tk.Canv
 
 
 def create_sidebar_link(
-    parent: tk.Misc, text: str, active: bool = False, command: Optional[Callable[[], None]] = None
+    parent: tk.Misc,
+    text: str,
+    active: bool = False,
+    command: Optional[Callable[[], None]] = None,
 ) -> ttk.Button:
     s = get_sidebar_style(parent, active)
     return ttk.Button(parent, text=text, style=s, command=command)
@@ -424,7 +429,9 @@ class TagEntry(ttk.Frame):
 
 
 class Accordion(ttk.Frame):
-    def __init__(self, parent: tk.Misc, title: str, content_func: Callable[[ttk.Frame], None]):
+    def __init__(
+        self, parent: tk.Misc, title: str, content_func: Callable[[ttk.Frame], None]
+    ):
         super().__init__(parent)
         self.header = ttk.Button(self, text=f"▶ {title}", command=self._toggle)
         self.header.pack(fill="x")
