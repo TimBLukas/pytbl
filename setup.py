@@ -15,5 +15,5 @@ setup(
     packages=find_packages(),
     install_requires=["pytest"],
     license="GPL-3.0-or-later",
-    python_requires=">=3.7",
+    python_requires=">=3.10",
 )

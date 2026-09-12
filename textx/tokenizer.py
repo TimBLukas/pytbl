@@ -259,7 +259,7 @@ class SentenceTokenizer(Tokenizer):
                 )
             )
 
-            return tokens
+        return tokens
 
 
 class PunctuationTokenizer(Tokenizer):
