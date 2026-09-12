@@ -37,6 +37,8 @@ print(slugify(data["title"]))  # a-useful-example
 | Package | Purpose |
 | --- | --- |
 | `datatypes` | Reusable type aliases such as `PathLike`, `JsonValue`, and `Headers`. |
+| `cli` | CLI scaffolding for argument parsing, colored output, progress bars, config resolution, and prompts. |
+| `demo` | A working mini application that combines the library's modules in one workflow. |
 | `filetypes.jsonx` | JSON reading, writing, validation, formatting, and conversion. |
 | `filetypes.yamlx` | YAML reading, writing, merging, templating, and conversion. |
 | `filetypes.xmlx` | XML parsing, creation, querying, editing, and validation. |

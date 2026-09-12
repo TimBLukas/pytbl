@@ -43,6 +43,39 @@ needed for your specific purpose.
 
 See the [README](README.md) for the overall package map and a quick start.
 
+## CLI helpers
+
+The `cli` package provides a small reusable layer on top of `argparse`.
+It helps standardize argument declarations, colored output, progress indicators,
+config discovery, and interactive prompts across projects.
+
+```python
+from cli import ArgumentSpec, CliApp, colorize, load_config, prompt_choice
+
+app = CliApp("demo", description="Example CLI")
+app.add_argument("--name", default="world", help="Name to greet")
+
+config = load_config("settings.json", defaults={"verbose": False})
+print(colorize("Ready", fg="green", bold=True))
+print(prompt_choice("Choose an environment", ["dev", "prod"], default="dev"))
+```
+
+Use `ArgumentSpec` when you want to describe arguments in data form, and use
+`CliApp` when you want a convenient, reusable parser object.
+
+## Demo project
+
+The repository also includes a mini application in [`demo/`](demo/README.md)
+that combines several modules together in one workflow. It demonstrates CLI
+parsing, UI widgets, environment/config handling, file IO, summary math,
+report generation, and logging in a single example.
+
+```bash
+python -m demo --input demo/data/demo_data.json --output demo/output/report.md --title "Project Pulse"
+```
+
+See the [demo README](demo/README.md) for the full walkthrough and sample output.
+
 ## File helpers
 
 Use `pathlib.Path` for paths and explicitly choose UTF-8 when working with

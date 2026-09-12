@@ -1,0 +1,8 @@
+[
+  {"title": "Data cleanup", "category": "ops", "score": 82},
+  {"title": "API review", "category": "engineering", "score": 91},
+  {"title": "Customer onboarding", "category": "support", "score": 74},
+  {"title": "Release checklist", "category": "ops", "score": 88},
+  {"title": "Docs refresh", "category": "content", "score": 69},
+  {"title": "Dashboard polish", "category": "design", "score": 94}
+]
