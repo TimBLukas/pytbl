@@ -269,8 +269,8 @@ def _demo():
     sidebar.pack(side="left", fill="y")  # No expand=True here, we want fixed width
 
     widgets.create_header(sidebar, "Navigation").pack(pady=20)
-    widgets.create_sidebar_link(sidebar, "🏠 Dashboard", active=True).pack(fill="x")
-    widgets.create_sidebar_link(sidebar, "📊 Analytics").pack(fill="x")
+    widgets.create_sidebar_link(sidebar, "Dashboard", active=True).pack(fill="x")
+    widgets.create_sidebar_link(sidebar, "Analytics").pack(fill="x")
 
     # 2. Main Content Area (Right)
     # We get BOTH the area to put stuff in, and the container to pack.

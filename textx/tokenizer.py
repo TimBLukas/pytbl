@@ -513,7 +513,7 @@ def create_tokenizer(tokenizer_type: TokenizerType) -> Tokenizer:
 
 
 def _test() -> None:
-    """Run a small manual demonstration of the tokenizer API."""
+    """Run a manual test of a tokenizer"""
     tokenizer = create_tokenizer(TokenizerType.WORD)
 
     text = (
